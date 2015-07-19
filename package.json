@@ -12,6 +12,7 @@
   },
   "scripts": {
     "start": "python3 app.py",
-    "postinstall": "bower install"
+    "preinstall": "bower install",
+    "postinstall": "pip install -r requirements.txt"
   }
 }
