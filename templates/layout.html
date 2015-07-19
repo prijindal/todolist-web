@@ -1,0 +1,62 @@
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To Do List</title>
+    <link rel="stylesheet" href="/css/app.css" />
+    <script src="/bower_components/modernizr/modernizr.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left-nav">
+        {% if project %}
+          <ul class="side-navigation">
+            <li><a href="/{{url}}/create">Create New</a></li>
+            <li class="divider"></li>
+            <li class="heading">List</li>
+            <li><a href="/{{url}}">All</a></li>
+            <li><a href="/{{url}}/recent">Recent</a></li>
+            <li><a href="/{{url}}/completed">Completed</a></li>
+            <li><a href="/{{url}}/remaining">Remaining</a></li>
+          </ul>
+        {% endif %}
+      </div>
+      {% block content %}{% endblock %}
+      <div class="right-nav">
+        <ul class="side-navigation">
+          <li class="heading">Projects</li>
+          <li><a href="/">View All Projects</a></li>
+          <li><a href="/new">Create new project</a></li>
+          {% if project %}
+            <li><a id="deleteProject" data-href="{{project}}/delete" href="#" data-reveal-id="deleteModal">Delete this project</a></li>
+            <li class="divider"></li>
+            <li class="heading">Progress</li>
+            <li>Completed Tasks : {{completed}}</li>
+            <li>Remaining Tasks : {{remaining}}</li>
+            <li>Total Tasks : {{completed + remaining}}</li>
+          {% endif %}
+        </ul>
+        {% if project %}
+          <div class="progress-bar">
+          {% if remaining or completed %}
+            <span class="progress-meter" style="width:{{(completed/(completed + remaining))*100}}%;"></span>
+          {% else %}
+          <span class="progress-meter" style="width:100%;"></span>
+          {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    <div id="deleteModal" class="reveal-modal tiny" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <h2 id="modalTitle">Are you Sure?</h2>
+      <button class="button success" id="yes">Yes</button>
+      <button id="no" class="close-reveal-modal" aria-label="Close">No</button>
+    </div>
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/bower_components/foundation/js/foundation/foundation.js"></script>
+    <script src="/bower_components/foundation/js/foundation/foundation.accordion.js"></script>
+    <script src="/bower_components/foundation/js/foundation/foundation.equalizer.js"></script>
+    <script src="/bower_components/foundation/js/foundation/foundation.reveal.js"></script>
+    <script src="/js/app.js"></script>
+  </body>
+</html>

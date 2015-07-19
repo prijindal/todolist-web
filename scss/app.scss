@@ -1,0 +1,181 @@
+@import "settings";
+//@import "foundation";
+// Or selectively include components
+ @import 
+    "foundation/components/side-nav",
+    "foundation/components/buttons",
+    "foundation/components/grid",
+    "foundation/components/accordion",
+    "foundation/components/progress-bars",
+    "foundation/components/forms",
+    "foundation/components/block-grid",
+    "foundation/components/reveal";
+//   "foundation/components/type",
+//   "foundation/components/button-groups",
+//   "foundation/components/top-bar",
+//   "foundation/components/tables",
+  // "foundation/components/alert-boxes",
+  // "foundation/components/breadcrumbs",
+  // "foundation/components/clearing",
+  // "foundation/components/dropdown",
+  // "foundation/components/dropdown-buttons",
+  // "foundation/components/flex-video",
+  // "foundation/components/inline-lists",
+  // "foundation/components/joyride",
+  // "foundation/components/keystrokes",
+  // "foundation/components/labels",
+  // "foundation/components/magellan",
+  // "foundation/components/orbit",
+  // "foundation/components/pagination",
+  // "foundation/components/pricing-tables",
+  // "foundation/components/split-buttons",
+  // "foundation/components/sub-nav",
+  // "foundation/components/switches",
+  // "foundation/components/tabs",
+  // "foundation/components/thumbs",
+  // "foundation/components/tooltips",
+  // "foundation/components/offcanvas",
+  // "foundation/components/visibility";
+
+// GRID
+.container {
+    @include grid-row($behavior: nest-collapse);
+    height: 100%;
+}
+
+.left-nav {
+    @include grid-column(2);
+    position: fixed;
+    left: 0;
+}
+
+.right-nav {
+    @include grid-column($columns:2);
+    position: fixed;
+    right: 0;
+}
+
+.form,
+.main-panel,
+.view_project {
+    @include grid-column($columns:8,$offset:2);
+}
+
+// 
+.left-nav,
+.right-nav {
+    height: 100%;
+    background:#E5E5E5;
+    .side-navigation {
+        @include side-nav();
+        li a:not(.button) {
+            padding-left:0;
+        }
+    }
+}
+
+.progress-bar {
+    @include progress-container();
+    @include radius(6px);
+    .progress-meter {
+        @include progress-meter(pink);
+        @include radius(5px);
+    }
+}
+
+.main-panel {
+    > .heading{
+        border-bottom: 1px solid #AAAAAA;
+    }
+}
+
+.todo-list {
+    @include accordion-container;
+    padding-left: 0;
+    .todo-item {
+        @include accordion-navigation;
+    }
+    .details {
+        @include grid-row();
+        @include accordion-content;
+        .content {
+            @include grid-column(6);
+            word-wrap:break-word;
+        }
+        .task-switcher {
+            @include grid-column($columns:2,$offset:1);
+            @include button($padding:rem-calc(11),$radius:true);
+            &.completed {
+                background: $warning-color;
+            }
+            &.remaining {
+                background: $success-color;
+            }
+        }
+    }
+    .success {
+        float: right;
+        color: $success-color;
+        font-size: rem-calc(20);
+        font-weight: bold;
+    }
+    .incomplete {
+        @extend .success;
+        color: $warning-color;
+    }
+}
+
+.form,
+.view_project {
+    position: absolute;
+}
+.form {
+  top:150px;
+}
+.view_project {
+  top:20px;
+  > .heading{
+        border-bottom: 1px solid #AAAAAA;
+    }
+}
+
+.project-list {
+  @include accordion-container;
+  .project-item {
+    @include accordion-navigation;
+    .details {
+      @include accordion-content;
+      background: #DDDDDD;
+    }
+  }
+}
+
+.underline {
+  .project-item & {
+    margin-top: rem-calc(10);
+  }
+  text-transform: uppercase;
+  text-decoration: underline;
+}
+
+.reveal-modal .close-reveal-modal {
+  color: #FFFFFF;
+  font-size: initial;
+  font-weight: normal;
+  line-height: initial;
+  position: initial;
+}
+
+.small-text {
+  font-size: rem-calc(12);
+  .todo-list & input {
+    font-size: rem-calc(12);
+    width: auto;
+  }
+}
+
+* {
+  &.thinking:before {
+    content: "";
+  }
+}

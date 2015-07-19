@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="form">
+	<form action="/save" method="POST">
+		<div class="row">
+			<div class="large-6 large-offset-3 columns">
+				<div class="row">
+					<div class="small-1 columns">
+						<label class="inline" for="title">Title</label>
+					</div>
+					<div class="small-11 columns">
+						<input type="text" name="title" id="title">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="large-6 large-offset-3 columns">
+				<label for="description">
+					Description
+					<textarea name="description" rows="6" id="description" placeholder="Write..."></textarea>
+				</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="large-2 large-offset-5 columns">
+				<button class="button" id="submit_new" name="submit_new">Create</button>
+			</div>
+		</div>
+	</form>
+</div>
+{% endblock %}

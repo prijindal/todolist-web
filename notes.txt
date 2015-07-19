@@ -1,0 +1,13 @@
+Create New  // Completed
+Delete Task
+
+LIST  // All Same
+	All
+	Recent
+	Completed
+	Remaining
+
+PROJECTS  
+	View All Projects  // Completed
+	Create new project  // Completed
+	Delete this project  

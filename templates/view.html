@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="view_project">
+	<h2 class="heading">Projects</h2>
+	    <ul class="small-block-grid-3 project-list" data-accordion>
+	    	{% for project in projects %}
+	    	<li class="project-item">
+	    		<a href="#{{project['url']}}">{{project['project']}}</a>
+	    		<div id="{{project['url']}}" class="details">
+	    			<div class="description">
+	    			{{project['description']}}
+	    			</div>
+	    			<div class="heading underline">Progress: </div>
+	    			{% if project['remaining']%}
+	    			<div class="progress-bar">
+	    				<span class="progress-meter" style="width:{{(project['completed']/(project['completed'] + project['remaining']))*100}}%;"></span>
+	    			</div>
+	    			{% else %}
+	    			<div class="progress-bar">
+	    				<span class="progress-meter" style="width:100%;"></span>
+	    			</div>
+	    			{% endif %}
+	    			<a href="/{{project['url']}}" class="button small">Select</a>
+	    		</div>
+	    	</li>
+	    	{% endfor %}
+	    </ul>
+</div>
+{% endblock %}

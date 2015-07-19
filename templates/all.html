@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block content %}
+      <div class="main-panel">
+        <h2 class="heading">All</h2>
+        <ul class="todo-list" data-accordion>
+          {% for task in tasks %}
+            {% if task %}
+            <li class="todo-item">
+              <a href="#{{task['url']}}">{{task['title']}}
+              {% if task['completed']%}  
+                <i class="success">&#9745;</i>
+              {% else %}
+                <i class="incomplete">&#9746;</i>
+              {% endif %}
+              </a>
+              <div id="{{task['url']}}" class="details">
+                <div class="content">
+                {{task['details']}}
+                <p class="small-text">Complete by: <input type="date" disabled="disabled" value="{{task['lastdate']}}"></p>
+                </div>
+                <a id="deleteThis" data-href="{{project}}/{{task['title']}}/delete" class="task-switcher thinking" data-reveal-id="deleteModal">Delete This</a>
+                {% if not task['completed']%}
+                  <a data-project="{{project}}" data-title="{{task['title']}}" class="task-switcher remaining setCompleted">Mark As Completed</a>
+                {% else %}
+                  <a data-project="{{project}}" data-title="{{task['title']}}" class="task-switcher completed setRemaining">Mark As Remaining</a>
+                {% endif %}
+              </div>
+            </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+{% endblock %}
