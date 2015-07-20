@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "python3 app.py",
-    "preinstall": "bower install",
-    "postinstall": "pip install flask"
+    "preinstall": "pip install flask",
+    "postinstall": "bower install"
   }
 }
