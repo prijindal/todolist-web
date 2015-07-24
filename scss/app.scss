@@ -1,7 +1,7 @@
 @import "settings";
 //@import "foundation";
 // Or selectively include components
- @import 
+ @import
     "foundation/components/side-nav",
     "foundation/components/buttons",
     "foundation/components/grid",
@@ -61,7 +61,7 @@
     @include grid-column($columns:8,$offset:2);
 }
 
-// 
+//
 .left-nav,
 .right-nav {
     height: 100%;
@@ -99,7 +99,7 @@
         @include grid-row();
         @include accordion-content;
         .content {
-            @include grid-column(6);
+            @include grid-column(5);
             word-wrap:break-word;
         }
         .task-switcher {

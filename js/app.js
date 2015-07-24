@@ -4,6 +4,66 @@ $(document).foundation({
     }
 });
 
+$("#editProject").on('click', function() {
+  if($(this).hasClass("edit")) {
+    var content = $(this).siblings('.description').html()
+    content = content.trim()
+    $(this).siblings('.description').html('<textarea>'+content+'</textarea>')
+    $(this).removeClass("edit").addClass("done-edit").html("Done")
+  }
+  else {
+    var content = $(this).siblings('.description').children('textarea').val()
+    content = content.trim()
+    console.log(content);
+    $(this).siblings('.description').html(content)
+    $(this).removeClass("done-edit").addClass("edit").html("Edit This")
+    var project = $(this).data("project")
+  	var title = $(this).data("title")
+  	var url = '/'+project+'/edit'
+  	$.ajax({
+  		url:url,
+      type:'POST',
+      data:{newContent:content},
+  		success:function(data) {
+        console.log('done');
+  		},
+      error:function(error) {
+        console.error(error);
+      }
+  	})
+  }
+})
+
+$("#editThis").on('click', function() {
+  if($(this).hasClass("edit")) {
+    var content = $(this).siblings('.content').children('.text-content').html()
+    content = content.trim()
+    $(this).siblings('.content').children('.text-content').html('<textarea>'+content+'</textarea>')
+    $(this).removeClass("edit").addClass("done-edit").html("Done")
+  }
+  else {
+    var content = $(this).siblings('.content').children('.text-content').children('textarea').val()
+    content = content.trim()
+    console.log(content);
+    $(this).siblings('.content').children('.text-content').html(content)
+    $(this).removeClass("done-edit").addClass("edit").html("Edit This")
+    var project = $(this).data("project")
+  	var title = $(this).data("title")
+  	var url = '/'+project+'/'+title+'/edit'
+  	$.ajax({
+  		url:url,
+      type:'POST',
+      data:{newContent:content},
+  		success:function(data) {
+        console.log('done');
+  		},
+      error:function(error) {
+        console.error(error);
+      }
+  	})
+  }
+})
+
 $("#deleteThis").on('click',function() {
 	$("#deleteModal #yes").attr("data-href",$(this).attr("data-href"))
 	$("#deleteModal #yes").attr("data-target","task")

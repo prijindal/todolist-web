@@ -1,4 +1,4 @@
-from flask import (Flask,send_from_directory, 
+from flask import (Flask,send_from_directory,
 				   request, redirect, make_response,
 				   url_for)
 from flask import render_template
@@ -82,6 +82,13 @@ def taskcomplete(project, task):
 @app.route("/<project>/<task>/remain")
 def taskremain(project, task):
 	database.markremain(project,task)
+	return "successfull"
+
+
+@app.route("/<project>/<task>/edit", methods = ['POST'])
+def taskedit(project, task):
+	newContent = dict(request.form.items())['newContent']
+	database.editTask(project, task, newContent)
 	return "successfull"
 
 

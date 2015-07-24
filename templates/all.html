@@ -7,7 +7,7 @@
             {% if task %}
             <li class="todo-item">
               <a href="#{{task['url']}}">{{task['title']}}
-              {% if task['completed']%}  
+              {% if task['completed']%}
                 <i class="success">&#9745;</i>
               {% else %}
                 <i class="incomplete">&#9746;</i>
@@ -15,9 +15,10 @@
               </a>
               <div id="{{task['url']}}" class="details">
                 <div class="content">
-                {{task['details']}}
+                <div class="text-content"> {{task['details']}} </div>
                 <p class="small-text">Complete by: <input type="date" disabled="disabled" value="{{task['lastdate']}}"></p>
                 </div>
+                <a id="editThis" data-project="{{project}}" data-title="{{task['title']}}" class="task-switcher thinking edit">Edit This</a>
                 <a id="deleteThis" data-href="{{project}}/{{task['title']}}/delete" class="task-switcher thinking" data-reveal-id="deleteModal">Delete This</a>
                 {% if not task['completed']%}
                   <a data-project="{{project}}" data-title="{{task['title']}}" class="task-switcher remaining setCompleted">Mark As Completed</a>

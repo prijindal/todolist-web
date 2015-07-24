@@ -116,7 +116,6 @@ def markcomplete(project,taskThis):
 	projectDetails = project_details_all(project)
 	newTask = []
 	for task in projectDetails['tasks']:
-		print(task['title'])
 		if task['title'] == taskThis:
 			task['completed'] = True
 		newTask.append(task)
@@ -131,5 +130,15 @@ def markremain(project,taskThis):
 			task['completed'] = False
 		newTask.append(task)
 		print(task)
+	projectDetails['tasks']=newTask
+	tasks.update({"project":project},projectDetails)
+
+def editTask(project, taskThis, newContent):
+	projectDetails = project_details_all(project)
+	newTask = []
+	for task in projectDetails['tasks']:
+		if task['title'] == taskThis:
+			task['details'] = newContent
+		newTask.append(task)
 	projectDetails['tasks']=newTask
 	tasks.update({"project":project},projectDetails)
