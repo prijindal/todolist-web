@@ -28,7 +28,7 @@
           <li><a href="/">View All Projects</a></li>
           <li><a href="/new">Create new project</a></li>
           {% if project %}
-            <li><a id="deleteProject" data-href="{{project}}/delete" href="#" data-reveal-id="deleteModal">Delete this project</a></li>
+            <li><a id="deleteProject" data-href="{{project}}/delete" href="#" data-reveal-id="deleteModal" onclick="setDeleteProject('{{url}}')">Delete this project</a></li>
             <li class="divider"></li>
             <li class="heading">Progress</li>
             <li>Completed Tasks : {{completed}}</li>

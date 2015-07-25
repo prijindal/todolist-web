@@ -4,7 +4,8 @@ $(document).foundation({
     }
 });
 
-$("#editProject").on('click', function() {
+
+$(".editProject").on('click', function() {
   if($(this).hasClass("edit")) {
     var content = $(this).siblings('.description').html()
     content = content.trim()
@@ -14,11 +15,11 @@ $("#editProject").on('click', function() {
   else {
     var content = $(this).siblings('.description').children('textarea').val()
     content = content.trim()
-    console.log(content);
+
     $(this).siblings('.description').html(content)
     $(this).removeClass("done-edit").addClass("edit").html("Edit This")
     var project = $(this).data("project")
-  	var title = $(this).data("title")
+
   	var url = '/'+project+'/edit'
   	$.ajax({
   		url:url,
@@ -34,15 +35,19 @@ $("#editProject").on('click', function() {
   }
 })
 
-$("#editThis").on('click', function() {
+
+$(".editThis").on('click', function() {
   if($(this).hasClass("edit")) {
     var content = $(this).siblings('.content').children('.text-content').html()
+    $(this).siblings('.content').children('.small-text').children('input').removeAttr("disabled")
     content = content.trim()
     $(this).siblings('.content').children('.text-content').html('<textarea>'+content+'</textarea>')
     $(this).removeClass("edit").addClass("done-edit").html("Done")
   }
   else {
     var content = $(this).siblings('.content').children('.text-content').children('textarea').val()
+    $(this).siblings('.content').children('.small-text').children('input').attr("disabled","disabled")
+    var date = $(this).siblings('.content').children('.small-text').children('input').val()
     content = content.trim()
     console.log(content);
     $(this).siblings('.content').children('.text-content').html(content)
@@ -53,7 +58,7 @@ $("#editThis").on('click', function() {
   	$.ajax({
   		url:url,
       type:'POST',
-      data:{newContent:content},
+      data:{newContent:content,newDate:date},
   		success:function(data) {
         console.log('done');
   		},
@@ -64,29 +69,34 @@ $("#editThis").on('click', function() {
   }
 })
 
-$("#deleteThis").on('click',function() {
-	$("#deleteModal #yes").attr("data-href",$(this).attr("data-href"))
-	$("#deleteModal #yes").attr("data-target","task")
-})
+var deleteDetails;
+function setDelete(project, task) {
+    deleteDetails = {
+        'project':project,
+        'task': task
+        }
+}
 
-$("#deleteProject").on('click',function() {
-	$("#deleteModal #yes").attr("data-href",$(this).attr("data-href"))
-	$("#deleteModal #yes").attr("data-target","project")
-})
+function setDeleteProject(project) {
+    deleteDetails = {
+        'project':project
+        };
+}
 
 $("#deleteModal #yes").on('click',function() {
-	var url = $(this).data("href")
-	var target = $("#deleteModal #yes").attr("data-target")
-	console.log(url,target)
+    console.log(deleteDetails);
+    var url;
+    if (deleteDetails['task']) {
+        url = url = '/'+deleteDetails['project']+'/'+deleteDetails['task']+'/delete'
+    }
+    else {
+        url = url = '/'+deleteDetails['project']+'/delete'
+    }
+	console.log(url)
 	$.ajax({
 		url:url,
 		success:function(data) {
-			if (target=="task") {
-				window.location.reload()
-			}
-			else {
-				window.location.href="/"
-			}
+            window.location.reload()
 		}
 	})
 })

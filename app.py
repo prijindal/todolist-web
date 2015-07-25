@@ -54,18 +54,22 @@ def remaining_tasks(project):
 
 	return render_template("all.html",**projectdetails)
 
+@app.route('/<project>/edit', methods=['POST'])
+def project_edit(project):
+	editDetails = dict(request.form.items())
+	database.editproject(project, editDetails['newContent'])
+	return "successfull"
+
 @app.route("/<project>/create")
 def create_tasks(project):
 	projectdetails = database.project_details(project)
-
 	return render_template("create.html",**projectdetails)
 
 @app.route("/<project>/save",methods=['POST'])
 def save_tasks(project):
 	taskInfo = dict(request.form.items())
-	response = make_response(redirect(url_for('.index',project=project)))
 	database.create_task(project,taskInfo)
-	return response
+	return redirect(url_for('all_tasks',project=project))
 
 @app.route("/<project>/<task>/delete")
 def taskdelete(project, task):
@@ -87,8 +91,10 @@ def taskremain(project, task):
 
 @app.route("/<project>/<task>/edit", methods = ['POST'])
 def taskedit(project, task):
-	newContent = dict(request.form.items())['newContent']
-	database.editTask(project, task, newContent)
+	data = dict(request.form.items())
+	newContent = data['newContent']
+	newDate = data['newDate']
+	database.editTask(project, task, newContent, newDate)
 	return "successfull"
 
 
@@ -111,5 +117,9 @@ def send_bower(path):
 @app.route('/foundation-icons/<path:path>')
 def send_icons(path):
     return send_from_directory('foundation-icons', path)
+
+@app.route('/favicon.ico')
+def send_favicon():
+    return "none"
 
 app.run(debug=True)

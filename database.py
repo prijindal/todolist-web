@@ -74,17 +74,19 @@ def project_details_all(project):
 def project_details_recent(project):
 	projectDetails = project_details(project)
 	for i in range(0,len(projectDetails["tasks"])):
-		print(projectDetails["tasks"][i])
 		if (projectDetails["tasks"][i]["setdate"] - datetime.utcnow()).days > 1:
 			projectDetails["tasks"][i]=None
 
 	return projectDetails
 
+def editproject(project, description):
+	projectDetails = project_details(project)
+	projectDetails['description'] = description
+	tasks.update({"url":project},projectDetails)
 
 def project_details_completed(project):
 	projectDetails = project_details(project)
 	for i in range(0,len(projectDetails["tasks"])):
-		print(projectDetails["tasks"][i])
 		if projectDetails["tasks"][i]["completed"]==False:
 			projectDetails["tasks"][i]=None
 
@@ -93,7 +95,6 @@ def project_details_completed(project):
 def project_details_remaining(project):
 	projectDetails = project_details(project)
 	for i in range(0,len(projectDetails["tasks"])):
-		print(projectDetails["tasks"][i])
 		if projectDetails["tasks"][i]["completed"]==True:
 			projectDetails["tasks"][i]=None
 
@@ -107,38 +108,38 @@ def delete_task(project,taskDel):
 	projectDetails = project_details_all(project)
 	newTask = []
 	for task in projectDetails['tasks']:
-		if task['title'] != taskDel:
+		if task['url'] != taskDel:
 			newTask.append(task)
 	projectDetails['tasks']=newTask
-	tasks.update({"project":project},projectDetails)
+	tasks.update({"url":project},projectDetails)
 
 def markcomplete(project,taskThis):
 	projectDetails = project_details_all(project)
 	newTask = []
 	for task in projectDetails['tasks']:
-		if task['title'] == taskThis:
+		if task['url'] == taskThis:
 			task['completed'] = True
 		newTask.append(task)
 	projectDetails['tasks']=newTask
-	tasks.update({"project":project},projectDetails)
+	tasks.update({"url":project},projectDetails)
 
 def markremain(project,taskThis):
 	projectDetails = project_details_all(project)
 	newTask = []
 	for task in projectDetails['tasks']:
-		if task['title'] == taskThis:
+		if task['url'] == taskThis:
 			task['completed'] = False
 		newTask.append(task)
-		print(task)
 	projectDetails['tasks']=newTask
-	tasks.update({"project":project},projectDetails)
+	tasks.update({"url":project},projectDetails)
 
-def editTask(project, taskThis, newContent):
+def editTask(project, taskThis, newContent, newDate):
 	projectDetails = project_details_all(project)
 	newTask = []
 	for task in projectDetails['tasks']:
-		if task['title'] == taskThis:
+		if task['url'] == taskThis:
 			task['details'] = newContent
+			task['lastdate'] = newDate
 		newTask.append(task)
 	projectDetails['tasks']=newTask
-	tasks.update({"project":project},projectDetails)
+	tasks.update({"url":project},projectDetails)

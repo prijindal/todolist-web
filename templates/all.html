@@ -16,14 +16,14 @@
               <div id="{{task['url']}}" class="details">
                 <div class="content">
                 <div class="text-content"> {{task['details']}} </div>
-                <p class="small-text">Complete by: <input type="date" disabled="disabled" value="{{task['lastdate']}}"></p>
+                <p class="small-text">Complete by: <input type="date" min="{{task['setdate'].strftime('%Y-%m-%d')}}" disabled="disabled" value="{{task['lastdate']}}"></p>
                 </div>
-                <a id="editThis" data-project="{{project}}" data-title="{{task['title']}}" class="task-switcher thinking edit">Edit This</a>
-                <a id="deleteThis" data-href="{{project}}/{{task['title']}}/delete" class="task-switcher thinking" data-reveal-id="deleteModal">Delete This</a>
+                <a data-project="{{url}}" data-title="{{task['url']}}" class="editThis task-switcher thinking edit">Edit This</a>
+                <a id="deleteThis" data-href="{{url}}/{{task['url']}}/delete" class="task-switcher thinking" data-reveal-id="deleteModal" onclick="setDelete('{{url}}','{{task['url']}}')">Delete This</a>
                 {% if not task['completed']%}
-                  <a data-project="{{project}}" data-title="{{task['title']}}" class="task-switcher remaining setCompleted">Mark As Completed</a>
+                  <a data-project="{{url}}" data-title="{{task['url']}}" class="task-switcher remaining setCompleted">Mark As Completed</a>
                 {% else %}
-                  <a data-project="{{project}}" data-title="{{task['title']}}" class="task-switcher completed setRemaining">Mark As Remaining</a>
+                  <a data-project="{{url}}" data-title="{{task['url']}}" class="task-switcher completed setRemaining">Mark As Remaining</a>
                 {% endif %}
               </div>
             </li>
