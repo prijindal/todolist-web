@@ -5,21 +5,21 @@
 	    <ul class="small-block-grid-3 project-list" data-accordion>
 	    	{% for project in projects %}
 	    	<li class="project-item">
-	    		<a href="#{{project['url']}}">{{project['project']}}</a>
+	    		<a href="#{{project['url']}}">{{project['name']}}</a>
 	    		<div id="{{project['url']}}" class="details">
 	    			<div class="description">
 	    			{{project['description']}}
 	    			</div>
-	    			{% if project['remaining'] or project['completed']%}
+	    			{% if project.remaining() or project.completed()%}
 	    			<div class="heading underline">Progress:</div>
-					<div>Completed {{project['completed']}} of {{project['completed'] + project['remaining']}}</div>
+					<div>Completed {{project.completed()}} of {{project.remaining() + project.completed()}}</div>
 	    			<div class="progress-bar">
-	    				<span class="progress-meter" style="width:{{(project['completed']/(project['completed'] + project['remaining']))*100}}%;"></span>
+	    				<span class="progress-meter" style="width:{{(project.completed()/(project.completed() + project.remaining()))*100}}%;"></span>
 	    			</div>
 					{% else %}
 					<div class="heading underline" style="margin-bottom:20px;">No tasks</div>
 	    			{% endif %}
-	    			<a href="/{{project['url']}}" class="button small">View</a>
+	    			<a href="{{url_for('project', project = project.url)}}" class="button small">View</a>
 					<a data-project="{{project['url']}}" class="editProject button small edit">Edit This</a>
 	    		</div>
 	    	</li>

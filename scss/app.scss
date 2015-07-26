@@ -3,6 +3,7 @@
 // Or selectively include components
  @import
     "foundation/components/side-nav",
+    "foundation/components/alert-boxes",
     "foundation/components/buttons",
     "foundation/components/grid",
     "foundation/components/accordion",
@@ -14,7 +15,6 @@
 //   "foundation/components/button-groups",
 //   "foundation/components/top-bar",
 //   "foundation/components/tables",
-  // "foundation/components/alert-boxes",
   // "foundation/components/breadcrumbs",
   // "foundation/components/clearing",
   // "foundation/components/dropdown",
@@ -130,7 +130,7 @@
     position: absolute;
 }
 .form {
-  top:150px;
+  top:50px;
 }
 .view_project {
   top:20px;
@@ -172,6 +172,15 @@
     font-size: rem-calc(12);
     width: auto;
   }
+}
+
+#alerts {
+    position: fixed;
+    bottom:0;
+    width:100%;
+    .alert-box {
+        margin-bottom:0;
+    }
 }
 
 * {

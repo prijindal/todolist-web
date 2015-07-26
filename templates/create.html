@@ -1,40 +1,47 @@
 {% extends "layout.html" %}
+
+{% from 'macros.html' import render_errors %}
+
 {% block content %}
 <div class="form">
-	<form action="/{{project}}/save" method="POST">
+	<form action="" method="POST" class="form">
+		{{ form.hidden_tag() }}
 		<div class="row">
-			<div class="large-6 large-offset-3 columns">
+			<div class="large-12 columns">
 				<div class="row">
 					<div class="small-1 columns">
 						<label class="inline" for="title">Title</label>
 					</div>
 					<div class="small-11 columns">
-						<input type="text" name="title" id="title">
+						{{render_errors(form.title)}}
+						{{form.title(placeholder=form.title.label.text)}}
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="row">
-			<div class="large-6 large-offset-3 columns">
+			<div class="large-12 columns">
 				<label for="description">
-					Description
-					<textarea name="description" rows="6" id="description" placeholder="Write..."></textarea>
+					Details
+					{{render_errors(form.details)}}
+					{{form.details(placeholder=form.details.label.text,rows=10)}}
 				</label>
 			</div>
 		</div>
 		<div class="row">
-			<div class="large-4 large-offset-3 columns">
+			<div class="large-8 columns">
 				<div class="row">
 					<div class="small-4 columns">
 						<label class="inline" for="last-date">Finish By: </label>
 					</div>
 					<div class="small-8 columns">
-						<input type="date" name="last-date" id="last-date">
+						{{render_errors(form.lastdate)}}
+						{{form.lastdate(placeholder=form.lastdate.label.text)}}
 					</div>
 				</div>
 			</div>
 			<div class="large-2 left columns">
-				<button class="button" id="submit_new" name="submit_new">Create</button>
+				<button class="button" id="submit" name="submit">Create</button>
 			</div>
 		</div>
 	</form>

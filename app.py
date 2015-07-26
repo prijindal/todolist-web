@@ -1,103 +1,155 @@
-from flask import (Flask,send_from_directory,
-				   request, redirect, make_response,
-				   url_for)
-from flask import render_template
-import database
+from flask import (Flask, render_template,send_from_directory,
+                   flash, redirect, url_for, abort, request)
 
 app = Flask(__name__)
+app.secret_key = 'ech38iy3hci83gc3bic7gbc3b8igcb3nyuk'
+
+import forms
+import models
 
 
+# GENERAL ROUTES
 @app.route('/')
 def index():
-	return render_template("view.html",projects = database.get_projects())
+	return render_template("view.html",projects = models.Project.select().limit(100))
 
-@app.route('/new')
+@app.route('/new', methods=['GET','POST'])
 def new():
-	return render_template("create_project.html")
+	form = forms.ProjectForm()
+	if form.validate_on_submit():
+		flash("Project Created!!")
+		models.Project.create_project(
+			name = form.name.data.strip(),
+			description = form.description.data.strip()
+		)
+		return redirect(url_for('index'))
+	return render_template('new.html', form=form)
 
-@app.route('/save',methods=['POST'])
-def save():
-	projectInfo = dict(request.form.items())
-	response = make_response(redirect(url_for(".index")))
-	database.create_project(projectInfo["title"],projectInfo["description"])
-	response.set_cookie('last_url',projectInfo['title'].replace(' ','_'))
-	return response
 
 
-@app.route("/<project>/delete")
+# PROJECT ROUTES
+@app.route('/<project>', methods=['GET'])
+def project(project):
+	try:
+		project = models.Project.select().where(models.Project.url**project).get()
+	except models.DoesNotExist:
+		abort(404)
+	else:
+		stream = project.task.limit(100)
+	return render_template('all.html', project=project, tasks = stream)
+
+@app.route('/<project>/recent', methods=['GET'])
+def project_recent(project):
+	try:
+		project = models.Project.select().where(models.Project.url**project).get()
+	except models.DoesNotExist:
+		abort(404)
+	else:
+		stream = project.task.where(models.Task.date_created==models.datetime.datetime.now()).limit(100) # Change this
+	return render_template('all.html', project=project, tasks = stream)
+
+@app.route('/<project>/completed', methods=['GET'])
+def project_completed(project):
+	try:
+		project = models.Project.select().where(models.Project.url**project).get()
+	except models.DoesNotExist:
+		abort(404)
+	else:
+		stream = project.task.where(models.Task.completed == True).limit(100) # Change this
+	return render_template('all.html', project=project, tasks = stream)
+
+@app.route('/<project>/remaining', methods=['GET'])
+def project_remaining(project):
+	try:
+		project = models.Project.select().where(models.Project.url**project).get()
+	except models.DoesNotExist:
+		abort(404)
+	else:
+		stream = project.task.where(models.Task.completed == False).limit(100) # Change this
+	return render_template('all.html', project=project, tasks = stream)
+
+
+@app.route("/<project>/delete", methods=['DELETE'])
 def delete_project(project):
-	database.delete_project(project)
-	return "successfull"
+	if models.Project.delete().where(models.Project.url**project).execute():
+		flash("Project Deleted!!")
+		return "Succesful"
+	else:
+		flash("Project Not Found!!")
+		return "not Succesful"
 
-@app.route('/<project>')
-def all_tasks(project):
-	projectdetails = database.project_details_all(project)
-	response = make_response(render_template("all.html",**projectdetails))
-	response.set_cookie('last_url',projectdetails['url'])
-	return response
-
-@app.route('/<project>/recent')
-def recent_tasks(project):
-	projectdetails = database.project_details_recent(project)
-
-	return render_template("all.html",**projectdetails)
-
-@app.route('/<project>/completed')
-def completed_tasks(project):
-	projectdetails = database.project_details_completed(project)
-
-	return render_template("all.html",**projectdetails)
-
-@app.route('/<project>/remaining')
-def remaining_tasks(project):
-	projectdetails = database.project_details_remaining(project)
-
-	return render_template("all.html",**projectdetails)
-
-@app.route('/<project>/edit', methods=['POST'])
+@app.route('/<project>/edit', methods=['PUT'])
 def project_edit(project):
-	editDetails = dict(request.form.items())
-	database.editproject(project, editDetails['newContent'])
+	try:
+		editDetails = dict(request.form.items())
+		cur_project = models.Project.get(models.Project.url**project)
+		cur_project.description = editDetails['newContent']
+		cur_project.save()
+		flash("New Data was Saved")
+	except ValueError:
+		flash("ERROR")
 	return "successfull"
 
-@app.route("/<project>/create")
-def create_tasks(project):
-	projectdetails = database.project_details(project)
-	return render_template("create.html",**projectdetails)
 
-@app.route("/<project>/save",methods=['POST'])
-def save_tasks(project):
-	taskInfo = dict(request.form.items())
-	database.create_task(project,taskInfo)
-	return redirect(url_for('all_tasks',project=project))
+# TASKS ROUTES
+@app.route("/<project>/create", methods=['GET','POST'])
+def create(project):
+	form = forms.TaskForm()
+	if form.validate_on_submit():
+		flash("Task Created!!")
+		models.Task.create_task(
+			title = form.title.data.strip(),
+			details = form.details.data.strip(),
+			lastdate = form.lastdate.data,
+			project = models.Project.select().where(models.Project.url**project).get()
+		)
+		return redirect(url_for('project', project=project))
+	return render_template('create.html', form=form)
 
-@app.route("/<project>/<task>/delete")
+@app.route("/<project>/<task>/delete", methods=['DELETE'])
 def taskdelete(project, task):
-	database.delete_task(project,task)
-	return "successfull"
+	cur_project = models.Project.select().where(models.Project.url**project).get()
+	if models.Task.delete().where(models.Task.url**task, cur_project.url==project).execute():
+		flash("Task Deleted in {} Project!!".format(project))
+		return "Succesful"
+	else:
+		flash("Task Not Found!!")
+		return "not Succesful"
 
-
-@app.route("/<project>/<task>/complete")
+@app.route("/<project>/<task>/complete", methods=['PUT'])
 def taskcomplete(project, task):
-	database.markcomplete(project,task)
-	return "successfull"
+	return toggle_state(project, task, True)
 
-
-@app.route("/<project>/<task>/remain")
+@app.route("/<project>/<task>/remain", methods=['PUT'])
 def taskremain(project, task):
-	database.markremain(project,task)
-	return "successfull"
+	return toggle_state(project, task, False)
 
+def toggle_state(project, task, newState):
+	cur_project = models.Project.select().where(models.Project.url**project).get()
+	try:
+		cur_task = models.Task.get(models.Task.url**task, cur_project.url==project).get()
+		cur_task.completed = newState
+		cur_task.save()
+		flash("Task was {}".format('done' if newState else 'undone'))
+		return "Succesful"
+	except ValueError:
+		flash("Task Not Found!!")
+		return "not Succesful"
 
-@app.route("/<project>/<task>/edit", methods = ['POST'])
-def taskedit(project, task):
-	data = dict(request.form.items())
-	newContent = data['newContent']
-	newDate = data['newDate']
-	database.editTask(project, task, newContent, newDate)
-	return "successfull"
-
-
+@app.route("/<project>/<task>/edit", methods = ['PUT'])
+def task_edit(project, task):
+	editDetails = dict(request.form.items())
+	cur_project = models.Project.get(models.Project.url**project)
+	try:
+		cur_task = models.Task.get(models.Task.url**task, cur_project.url==project).get()
+		cur_task.details = editDetails['newContent']
+		cur_task.lastdate = editDetails['newDate']
+		cur_task.save()
+		flash("New Task Data was Saved")
+		return "Succesful"
+	except ValueError:
+		flash("ERROR")
+		return "unsuccesfull"
 
 
 
@@ -122,4 +174,13 @@ def send_icons(path):
 def send_favicon():
     return "none"
 
-app.run(debug=True)
+
+
+
+DEBUG = True
+HOST = '0.0.0.0'
+PORT = 8000
+
+if __name__ == '__main__':
+    models.initialize()
+    app.run(debug=DEBUG, host=HOST, port=PORT)

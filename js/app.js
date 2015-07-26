@@ -23,7 +23,7 @@ $(".editProject").on('click', function() {
   	var url = '/'+project+'/edit'
   	$.ajax({
   		url:url,
-      type:'POST',
+      type:'PUT',
       data:{newContent:content},
   		success:function(data) {
         console.log('done');
@@ -57,7 +57,7 @@ $(".editThis").on('click', function() {
   	var url = '/'+project+'/'+title+'/edit'
   	$.ajax({
   		url:url,
-      type:'POST',
+      type:'PUT',
       data:{newContent:content,newDate:date},
   		success:function(data) {
         console.log('done');
@@ -95,8 +95,14 @@ $("#deleteModal #yes").on('click',function() {
 	console.log(url)
 	$.ajax({
 		url:url,
+        type:'DELETE',
 		success:function(data) {
-            window.location.reload()
+            if(deleteDetails['task']) {
+                window.location.reload()
+            }
+            else {
+                window.location.href="/"
+            }
 		}
 	})
 })
@@ -108,6 +114,7 @@ $(".setCompleted").on('click',function() {
 	console.log(url)
 	$.ajax({
 		url:url,
+        type:'PUT',
 		success:function(data) {
 			window.location.reload()
 		}
@@ -120,6 +127,7 @@ $(".setRemaining").on('click',function() {
 	console.log(url)
 	$.ajax({
 		url:url,
+        type:'PUT',
 		success:function(data) {
 			window.location.reload()
 		}

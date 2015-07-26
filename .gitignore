@@ -27,3 +27,5 @@ bower_components/
 .sass-cache/
 css/
 __pycache__/
+.db
+.json
