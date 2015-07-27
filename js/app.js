@@ -23,7 +23,7 @@ $(".editProject").on('click', function() {
   	var url = '/'+project+'/edit'
   	$.ajax({
   		url:url,
-      type:'PUT',
+      type:'POST',
       data:{newContent:content},
   		success:function(data) {
         console.log('done');
@@ -57,7 +57,7 @@ $(".editThis").on('click', function() {
   	var url = '/'+project+'/'+title+'/edit'
   	$.ajax({
   		url:url,
-      type:'PUT',
+      type:'POST',
       data:{newContent:content,newDate:date},
   		success:function(data) {
         console.log('done');

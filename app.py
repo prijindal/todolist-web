@@ -78,7 +78,7 @@ def delete_project(project):
 		flash("Project Not Found!!")
 		return "not Succesful"
 
-@app.route('/<project>/edit', methods=['PUT'])
+@app.route('/<project>/edit', methods=['POST'])
 def project_edit(project):
 	try:
 		editDetails = dict(request.form.items())
@@ -136,7 +136,7 @@ def toggle_state(project, task, newState):
 		flash("Task Not Found!!")
 		return "not Succesful"
 
-@app.route("/<project>/<task>/edit", methods = ['PUT'])
+@app.route("/<project>/<task>/edit", methods = ['POST'])
 def task_edit(project, task):
 	editDetails = dict(request.form.items())
 	cur_project = models.Project.get(models.Project.url**project)
