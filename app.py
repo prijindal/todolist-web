@@ -1,3 +1,5 @@
+import os
+
 from flask import (Flask,send_from_directory,
 				   request, redirect, make_response,
 				   url_for)
@@ -122,4 +124,4 @@ def send_icons(path):
 def send_favicon():
     return "none"
 
-app.run(debug=True)
+app.run(debug=True,port = int(os.environ.get('PORT', 5000)))
