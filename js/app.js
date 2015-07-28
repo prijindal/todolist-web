@@ -95,14 +95,8 @@ $("#deleteModal #yes").on('click',function() {
 	console.log(url)
 	$.ajax({
 		url:url,
-        type:'DELETE',
 		success:function(data) {
-            if(deleteDetails['task']) {
-                window.location.reload()
-            }
-            else {
-                window.location.href="/"
-            }
+            window.location.reload()
 		}
 	})
 })
@@ -114,7 +108,6 @@ $(".setCompleted").on('click',function() {
 	console.log(url)
 	$.ajax({
 		url:url,
-        type:'PUT',
 		success:function(data) {
 			window.location.reload()
 		}
@@ -127,7 +120,6 @@ $(".setRemaining").on('click',function() {
 	console.log(url)
 	$.ajax({
 		url:url,
-        type:'PUT',
 		success:function(data) {
 			window.location.reload()
 		}

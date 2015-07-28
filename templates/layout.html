@@ -11,13 +11,13 @@
       <div class="left-nav">
         {% if project %}
           <ul class="side-navigation">
-            <li><a href="/{{project.url}}/create">Create New</a></li>
+            <li><a href="/{{url}}/create">Create New</a></li>
             <li class="divider"></li>
             <li class="heading">List</li>
-            <li><a href="/{{project.url}}">All</a></li>
-            <li><a href="/{{project.url}}/recent">Recent</a></li>
-            <li><a href="/{{project.url}}/completed">Completed</a></li>
-            <li><a href="/{{project.url}}/remaining">Remaining</a></li>
+            <li><a href="/{{url}}">All</a></li>
+            <li><a href="/{{url}}/recent">Recent</a></li>
+            <li><a href="/{{url}}/completed">Completed</a></li>
+            <li><a href="/{{url}}/remaining">Remaining</a></li>
           </ul>
         {% endif %}
       </div>
@@ -28,18 +28,18 @@
           <li><a href="/">View All Projects</a></li>
           <li><a href="/new">Create new project</a></li>
           {% if project %}
-            <li><a id="deleteProject" data-href="{{project}}/delete" href="#" data-reveal-id="deleteModal" onclick="setDeleteProject('{{project.url}}')">Delete this project</a></li>
+            <li><a id="deleteProject" data-href="{{project}}/delete" href="#" data-reveal-id="deleteModal" onclick="setDeleteProject('{{url}}')">Delete this project</a></li>
             <li class="divider"></li>
             <li class="heading">Progress</li>
-            <li>Completed Tasks : {{project.completed()}}</li>
-            <li>Remaining Tasks : {{project.remaining()}}</li>
-            <li>Total Tasks : {{project.completed() + project.remaining()}}</li>
+            <li>Completed Tasks : {{completed}}</li>
+            <li>Remaining Tasks : {{remaining}}</li>
+            <li>Total Tasks : {{completed + remaining}}</li>
           {% endif %}
         </ul>
         {% if project %}
           <div class="progress-bar">
-          {% if project.remaining() or project.completed() %}
-            <span class="progress-meter" style="width:{{(project.completed()/(project.completed() + project.remaining()))*100}}%;"></span>
+          {% if remaining or completed %}
+            <span class="progress-meter" style="width:{{(completed/(completed + remaining))*100}}%;"></span>
           {% else %}
           <span class="progress-meter" style="width:100%;"></span>
           {% endif %}
@@ -51,20 +51,6 @@
       <h2 id="modalTitle">Are you Sure?</h2>
       <button class="button success" id="yes">Yes</button>
       <button id="no" class="close-reveal-modal" aria-label="Close">No</button>
-    </div>
-    <div id="alerts">
-        {% with messages = get_flashed_messages(with_categories=True) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div data-alert class="alert-box">
-						<span class="alert-content">
-							{{message}}
-						</span>
-						<a class="close">x</a>
-					</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
     </div>
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="/bower_components/foundation/js/foundation/foundation.js"></script>
