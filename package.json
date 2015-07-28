@@ -14,5 +14,8 @@
     "start": "python3 app.py",
     "preinstall": "pip install -r requirements.txt",
     "postinstall": "bower install"
+},
+  "engines": {
+    "node": "0.12.x"
   }
 }
