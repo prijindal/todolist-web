@@ -16,6 +16,6 @@
     "postinstall": "bower install"
 },
   "engines": {
-    "npm": "0.12.x"
+    "npm": "2.1.x"
   }
 }
