@@ -141,7 +141,11 @@ $(".setRemaining").on('click',function() {
 function task_checker(thisObject) {
     var task_date = $(thisObject).siblings('.details').find('.content p input').val()
     var task = new Date(task_date);
+    task.setHours(23)
+    task.setMinutes(59)
+    task.setSeconds(59)
     var now = new Date();
+    console.log(task, now, task_date);
     var diff = task - now;
     if (diff < 0) {
         $(thisObject).parent().addClass('warning')
