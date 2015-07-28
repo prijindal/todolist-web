@@ -23,7 +23,7 @@ $ source venv/bin/activate
 
 and to run it
 ```
-    (venv)$ python app.py
+(venv)$ python app.py
 ```
 
 Thank You!!

@@ -5,8 +5,8 @@
         <ul class="todo-list" data-accordion>
           {% for task in tasks %}
             {% if task %}
-            <li class="todo-item">
-              <a href="#{{task['url']}}">{{task['title']}}
+            <li class="todo-item {% if task['completed']%} completed {% endif %}">
+              <a href="#{{task['url']}}" class="task-button">{{task['title']}}
               {% if task['completed']%}
                 <i class="success">&#9745;</i>
               {% else %}

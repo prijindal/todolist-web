@@ -4,6 +4,9 @@ $(document).foundation({
     }
 });
 
+$('.task-button').each(function( index ) {
+    task_checker(this)
+});
 
 $(".editProject").on('click', function() {
   if($(this).hasClass("edit")) {
@@ -37,20 +40,21 @@ $(".editProject").on('click', function() {
 
 
 $(".editThis").on('click', function() {
+    var $selector = $(this).siblings('.content')
   if($(this).hasClass("edit")) {
-    var content = $(this).siblings('.content').children('.text-content').html()
-    $(this).siblings('.content').children('.small-text').children('input').removeAttr("disabled")
+    var content = $selector.children('.text-content').html()
+    $selector.children('.small-text').children('input').removeAttr("disabled")
     content = content.trim()
-    $(this).siblings('.content').children('.text-content').html('<textarea>'+content+'</textarea>')
+    $selector.children('.text-content').html('<textarea>'+content+'</textarea>')
     $(this).removeClass("edit").addClass("done-edit").html("Done")
   }
   else {
-    var content = $(this).siblings('.content').children('.text-content').children('textarea').val()
-    $(this).siblings('.content').children('.small-text').children('input').attr("disabled","disabled")
-    var date = $(this).siblings('.content').children('.small-text').children('input').val()
+    var content = $selector.children('.text-content').children('textarea').val()
+    $selector.children('.small-text').children('input').attr("disabled","disabled")
+    var date = $selector.children('.small-text').children('input').val()
     content = content.trim()
     console.log(content);
-    $(this).siblings('.content').children('.text-content').html(content)
+    $selector.children('.text-content').html(content)
     $(this).removeClass("done-edit").addClass("edit").html("Edit This")
     var project = $(this).data("project")
   	var title = $(this).data("title")
@@ -61,6 +65,9 @@ $(".editThis").on('click', function() {
       data:{newContent:content,newDate:date},
   		success:function(data) {
         console.log('done');
+        $selector.parent().siblings('.task-button').each(function() {
+            task_checker(this)
+        })
   		},
       error:function(error) {
         console.error(error);
@@ -96,7 +103,12 @@ $("#deleteModal #yes").on('click',function() {
 	$.ajax({
 		url:url,
 		success:function(data) {
-            window.location.reload()
+            if (deleteDetails['task']) {
+                window.location.reload()
+            }
+            else {
+                window.location.href='/'
+            }
 		}
 	})
 })
@@ -125,3 +137,13 @@ $(".setRemaining").on('click',function() {
 		}
 	})
 })
+
+function task_checker(thisObject) {
+    var task_date = $(thisObject).siblings('.details').find('.content p input').val()
+    var task = new Date(task_date);
+    var now = new Date();
+    var diff = task - now;
+    if (diff < 0) {
+        $(thisObject).parent().addClass('warning')
+    }
+}

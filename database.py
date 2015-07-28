@@ -103,7 +103,7 @@ def project_details_remaining(project):
 
 
 def delete_project(project):
-	db.tasks.remove({'project':project})
+	db.tasks.remove({'url':project})
 
 def delete_task(project,taskDel):
 	projectDetails = project_details_all(project)

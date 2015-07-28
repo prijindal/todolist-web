@@ -94,6 +94,9 @@
     padding-left: 0;
     .todo-item {
         @include accordion-navigation;
+        &.warning:not(.completed) > a{
+            background-color: $alert-color;
+        }
     }
     .details {
         @include grid-row();

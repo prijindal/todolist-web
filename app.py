@@ -1,4 +1,5 @@
 import os
+import datetime
 
 from flask import (Flask,send_from_directory,
 				   request, redirect, make_response,
@@ -99,7 +100,8 @@ def taskedit(project, task):
 	database.editTask(project, task, newContent, newDate)
 	return "successfull"
 
-
+def check_date(current):
+	print(datetime.datetime.now, current)
 
 
 
