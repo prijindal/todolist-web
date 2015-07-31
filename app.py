@@ -3,7 +3,7 @@ import datetime
 
 from flask import (Flask,send_from_directory,
 				   request, redirect, make_response,
-				   url_for)
+				   url_for, abort)
 from flask import render_template
 import database
 
@@ -34,34 +34,46 @@ def delete_project(project):
 
 @app.route('/<project>')
 def all_tasks(project):
-	projectdetails = database.project_details_all(project)
-	response = make_response(render_template("all.html",**projectdetails))
-	response.set_cookie('last_url',projectdetails['url'])
-	return response
+	try:
+		projectdetails = database.project_details_all(project)
+		response = make_response(render_template("all.html",**projectdetails))
+		response.set_cookie('last_url',projectdetails['url'])
+		return response
+	except TypeError:
+		abort(404)
 
 @app.route('/<project>/recent')
 def recent_tasks(project):
-	projectdetails = database.project_details_recent(project)
-
-	return render_template("all.html",**projectdetails)
+	try:
+		projectdetails = database.project_details_recent(project)
+		return render_template("all.html",**projectdetails)
+	except TypeError:
+		abort(404)
 
 @app.route('/<project>/completed')
 def completed_tasks(project):
-	projectdetails = database.project_details_completed(project)
-
-	return render_template("all.html",**projectdetails)
+	try:
+		projectdetails = database.project_details_completed(project)
+		return render_template("all.html",**projectdetails)
+	except TypeError:
+		abort(404)
 
 @app.route('/<project>/remaining')
 def remaining_tasks(project):
-	projectdetails = database.project_details_remaining(project)
-
-	return render_template("all.html",**projectdetails)
+	try:
+		projectdetails = database.project_details_remaining(project)
+		return render_template("all.html",**projectdetails)
+	except TypeError:
+		abort(404)
 
 @app.route('/<project>/edit', methods=['POST'])
 def project_edit(project):
-	editDetails = dict(request.form.items())
-	database.editproject(project, editDetails['newContent'])
-	return "successfull"
+	try:
+		editDetails = dict(request.form.items())
+		database.editproject(project, editDetails['newContent'])
+		return "successfull"
+	except TypeError:
+		return "ERROR"
 
 @app.route("/<project>/create")
 def create_tasks(project):
