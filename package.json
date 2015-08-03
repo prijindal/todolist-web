@@ -14,7 +14,7 @@
     "grunt-sass": "~0.18.0"
   },
   "scripts": {
-    "start": "python3 app.py",
+    "start": "python app.py",
     "preinstall": "pip install -r requirements.txt",
     "postinstall": "bower install"
   }

@@ -1,8 +1,9 @@
 from pymongo import MongoClient
 from datetime import datetime
 
-client = MongoClient()
-db = client.todo
+uri = "mongodb://task_prijindal:WaitForIt@ds059672.mongolab.com/tasks"
+client = MongoClient(uri, 59672)
+db = client.tasks
 
 tasks = db.tasks
 

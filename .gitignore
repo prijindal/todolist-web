@@ -22,10 +22,9 @@ coverage
 # Dependency directory
 # https://docs.npmjs.com/misc/faq#should-i-check-my-node-modules-folder-into-git
 node_modules/
-bower_components/
 
 .sass-cache/
-css/
 __pycache__/
 venv/
 *.pyc
+package.json

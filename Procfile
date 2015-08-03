@@ -1,1 +1,1 @@
-web: grunt build && source venv/bin/activate && python app.py
+web: python app.py
