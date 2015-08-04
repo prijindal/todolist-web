@@ -1,147 +1,155 @@
-from pymongo import MongoClient
-from datetime import datetime
+import datetime
 
-uri = "mongodb://task_prijindal:WaitForIt@ds059672.mongolab.com/tasks"
-client = MongoClient(uri, 59672)
-db = client.tasks
+from config import db
 
-tasks = db.tasks
+
+class Task(db.EmbeddedDocument):
+	title = db.StringField(verbose_name = "Title", max_length = 255, unique = True, required = True)
+	details = db.StringField(verbose_name = "Details")
+	setdate = db.DateTimeField(default = datetime.datetime.now)
+	lastdate = db.DateTimeField(verbose_name = "Last Date")
+	completed = db.BooleanField(default = False)
+	url = db.StringField(max_length = 255, unique = True)
+
+
+class Project(db.Document):
+	project = db.StringField(verbose_name = "Project",max_length = 255, unique = True, required = True)
+	description = db.StringField(verbose_name = "Description")
+	dateofcreation = db.DateTimeField(default = datetime.datetime.now)
+	url = db.StringField(max_length = 255, unique = True, required = True)
+	tasks = db.ListField(db.EmbeddedDocumentField('Task'))
+
+	@property
+	def completed(self):
+		projectDetails =  Project.objects().get(url = self.url)
+		count = 0
+		for i in projectDetails.tasks:
+			if i.completed == True:
+				count+=1
+		return count
+
+	@property
+	def remaining(self):
+		projectDetails =  Project.objects().get(url = self.url)
+		count = 0
+		for i in projectDetails.tasks:
+			if i.completed == False:
+				count+=1
+		return count
+
+
+
+
 
 def create_project(projectname,projectdescription):
 	if check_project(projectname)==False:
-		projectInfo = {
-		"project" : projectname,
-		"description" : projectdescription,
-		"dateofcreation" : datetime.utcnow(),
-		"url" : projectname.replace(" ","_"),
-		"tasks" : []
-		}
-		tasks.insert_one(projectInfo)
+		project = Project(
+		project = projectname,
+		description = projectdescription,
+		dateofcreation = datetime.datetime.utcnow(),
+		url = projectname.replace(" ","_"),
+		tasks = []
+		)
+		project.save()
 
 def get_projects():
-	allProjects = []
-	for project in tasks.find():
-		completed=0
-		remaining = 0
-		for task in project["tasks"]:
-			if task['completed']:
-				completed+=1
-			else:
-				remaining+=1
-		project["completed"] = completed
-		project["remaining"] = remaining
-		allProjects.append(project)
-	return allProjects
+	return Project.objects.all()
 
 def check_project(project):
-	if tasks.find_one({"project":project}):
+	try:
+		Project.objects.get(url = project)
 		return True
-	else:
+	except db.DoesNotExist:
 		return False
 
 def project_details(project):
-	projectDetails = tasks.find_one({"url":project})
-	completed=0
-	remaining = 0
-	if projectDetails:
-		for task in projectDetails["tasks"]:
-			if task['completed']:
-				completed+=1
-			else:
-				remaining+=1
-		projectDetails["completed"] = completed
-		projectDetails["remaining"] = remaining
-	return projectDetails
-
-def create_task(projectname,taskinfo):
-	previousTasks = tasks.find_one({"project":projectname})["tasks"]
-	title = taskinfo["title"]
-	details = taskinfo["description"]
-	lastdate = taskinfo["last-date"]
-	taskinfo = {
-	"title" : title,
-	"details" : details,
-	"setdate" : datetime.utcnow(),
-	"lastdate" : lastdate,
-	"completed" : False,
-	"url" : title.replace(" ","_")
-	}
-	previousTasks.append(taskinfo)
-	tasks.update({"project":projectname},{'$set': {"tasks":previousTasks}})
-
-def project_details_all(project):
-	projectDetails = project_details(project)
+	projectDetails = Project.objects().get(url = project)
 	return projectDetails
 
 def project_details_recent(project):
 	projectDetails = project_details(project)
 	for i in range(0,len(projectDetails["tasks"])):
-		if (projectDetails["tasks"][i]["setdate"] - datetime.utcnow()).days > 1:
+		if (projectDetails["tasks"][i]["setdate"] - datetime.datetime.utcnow()).days > 1:
 			projectDetails["tasks"][i]=None
 
 	return projectDetails
 
-def editproject(project, description):
-	projectDetails = project_details(project)
-	projectDetails['description'] = description
-	tasks.update({"url":project},projectDetails)
+
 
 def project_details_completed(project):
 	projectDetails = project_details(project)
-	for i in range(0,len(projectDetails["tasks"])):
-		if projectDetails["tasks"][i]["completed"]==False:
-			projectDetails["tasks"][i]=None
-
+	i = 0
+	while i < len(projectDetails.tasks):
+		if projectDetails.tasks[i].completed == False:
+			del projectDetails.tasks[i]
+		i+=1
 	return projectDetails
 
 def project_details_remaining(project):
 	projectDetails = project_details(project)
-	for i in range(0,len(projectDetails["tasks"])):
-		if projectDetails["tasks"][i]["completed"]==True:
-			projectDetails["tasks"][i]=None
-
+	i = 0
+	while i < len(projectDetails.tasks):
+		if projectDetails.tasks[i].completed == True:
+			del projectDetails.tasks[i]
+		i+=1
 	return projectDetails
 
 
+
+def create_task(projectname,taskinfo):
+	project = project_details(projectname)
+	title = taskinfo["title"]
+	details = taskinfo["description"]
+	lastdate = taskinfo["last-date"]
+	task = Task(
+	title = title,
+	details = details,
+	setdate = datetime.datetime.utcnow(),
+	lastdate = lastdate,
+	completed = False,
+	url = title.replace(" ","_")
+	)
+	project.tasks.append(task)
+	project.save()
+
+
+
+def editproject(project, description):
+	Project.objects(url=project).update(**{'description':description})
+
+
 def delete_project(project):
-	db.tasks.remove({'url':project})
+	Project.objects(url=project).delete()
 
 def delete_task(project,taskDel):
-	projectDetails = project_details_all(project)
-	newTask = []
-	for task in projectDetails['tasks']:
-		if task['url'] != taskDel:
-			newTask.append(task)
-	projectDetails['tasks']=newTask
-	tasks.update({"url":project},projectDetails)
+	projectDesc = Project.objects(url=project).get()
+	for i in range(len(projectDesc.tasks)):
+		if projectDesc.tasks[i].url == taskDel:
+			del projectDesc.tasks[i]
+			break
+	projectDesc.save()
 
 def markcomplete(project,taskThis):
-	projectDetails = project_details_all(project)
-	newTask = []
-	for task in projectDetails['tasks']:
-		if task['url'] == taskThis:
-			task['completed'] = True
-		newTask.append(task)
-	projectDetails['tasks']=newTask
-	tasks.update({"url":project},projectDetails)
+	projectDesc = Project.objects(url=project).get()
+	for i in range(len(projectDesc.tasks)):
+		if projectDesc.tasks[i].url == taskThis:
+			projectDesc.tasks[i].completed = True
+			break
+	projectDesc.save()
 
 def markremain(project,taskThis):
-	projectDetails = project_details_all(project)
-	newTask = []
-	for task in projectDetails['tasks']:
-		if task['url'] == taskThis:
-			task['completed'] = False
-		newTask.append(task)
-	projectDetails['tasks']=newTask
-	tasks.update({"url":project},projectDetails)
+	projectDesc = Project.objects(url=project).get()
+	for i in range(len(projectDesc.tasks)):
+		if projectDesc.tasks[i].url == taskThis:
+			projectDesc.tasks[i].completed = False
+			break
+	projectDesc.save()
 
 def editTask(project, taskThis, newContent, newDate):
-	projectDetails = project_details_all(project)
-	newTask = []
-	for task in projectDetails['tasks']:
-		if task['url'] == taskThis:
-			task['details'] = newContent
-			task['lastdate'] = newDate
-		newTask.append(task)
-	projectDetails['tasks']=newTask
-	tasks.update({"url":project},projectDetails)
+	projectDesc = Project.objects(url=project).get()
+	for i in range(len(projectDesc.tasks)):
+		if projectDesc.tasks[i].url == taskThis:
+			projectDesc.tasks[i].details = newContent
+			projectDesc.tasks[i].lastdate = newDate
+			break
+	projectDesc.save()

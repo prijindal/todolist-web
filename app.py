@@ -1,13 +1,13 @@
 import os
 import datetime
 
-from flask import (Flask,send_from_directory,
+from flask import (send_from_directory,
 				   request, redirect, make_response,
 				   url_for, abort)
 from flask import render_template
-import database
 
-app = Flask(__name__)
+import database
+from config import app
 
 
 @app.route('/')
@@ -34,36 +34,35 @@ def delete_project(project):
 
 @app.route('/<project>')
 def all_tasks(project):
+	print(project)
 	try:
-		projectdetails = database.project_details_all(project)
-		response = make_response(render_template("all.html",**projectdetails))
-		response.set_cookie('last_url',projectdetails['url'])
-		return response
-	except TypeError:
+		projectdetails = database.project_details(project)
+		return render_template("all.html",project = projectdetails)
+	except database.db.DoesNotExist:
 		abort(404)
 
 @app.route('/<project>/recent')
 def recent_tasks(project):
 	try:
 		projectdetails = database.project_details_recent(project)
-		return render_template("all.html",**projectdetails)
-	except TypeError:
+		return render_template("all.html",project = projectdetails)
+	except database.db.DoesNotExist:
 		abort(404)
 
 @app.route('/<project>/completed')
 def completed_tasks(project):
 	try:
 		projectdetails = database.project_details_completed(project)
-		return render_template("all.html",**projectdetails)
-	except TypeError:
+		return render_template("all.html",project = projectdetails)
+	except database.db.DoesNotExist:
 		abort(404)
 
 @app.route('/<project>/remaining')
 def remaining_tasks(project):
 	try:
 		projectdetails = database.project_details_remaining(project)
-		return render_template("all.html",**projectdetails)
-	except TypeError:
+		return render_template("all.html",project = projectdetails)
+	except database.db.DoesNotExist:
 		abort(404)
 
 @app.route('/<project>/edit', methods=['POST'])
@@ -78,7 +77,7 @@ def project_edit(project):
 @app.route("/<project>/create")
 def create_tasks(project):
 	projectdetails = database.project_details(project)
-	return render_template("create.html",**projectdetails)
+	return render_template("create.html",project = projectdetails)
 
 @app.route("/<project>/save",methods=['POST'])
 def save_tasks(project):
@@ -138,4 +137,5 @@ def send_icons(path):
 def send_favicon():
     return "none"
 
-app.run(debug=True,host='0.0.0.0',port = int(os.environ.get('PORT', 5000)))
+if __name__ == '__main__':
+	app.run(debug=True,host='0.0.0.0',port = int(os.environ.get('PORT', 5000)))

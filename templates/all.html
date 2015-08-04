@@ -3,7 +3,7 @@
       <div class="main-panel">
         <h2 class="heading">All</h2>
         <ul class="todo-list" data-accordion>
-          {% for task in tasks %}
+          {% for task in project.tasks %}
             {% if task %}
             <li class="todo-item {% if task['completed']%} completed {% endif %}">
               <a href="#{{task['url']}}" class="task-button">{{task['title']}}
@@ -18,12 +18,12 @@
                 <div class="text-content"> {{task['details']}} </div>
                 <p class="small-text">Complete by: <input type="date" min="{{task['setdate'].strftime('%Y-%m-%d')}}" disabled="disabled" value="{{task['lastdate']}}"></p>
                 </div>
-                <a data-project="{{url}}" data-title="{{task['url']}}" class="editThis task-switcher thinking edit">Edit This</a>
-                <a id="deleteThis" data-href="{{url}}/{{task['url']}}/delete" class="task-switcher thinking" data-reveal-id="deleteModal" onclick="setDelete('{{url}}','{{task['url']}}')">Delete This</a>
+                <a data-project="{{project.url}}" data-title="{{task.url}}" class="editThis task-switcher thinking edit">Edit This</a>
+                <a id="deleteThis" data-href="{{project.url}}/{{task.url}}/delete" class="task-switcher thinking" data-reveal-id="deleteModal" onclick="setDelete('{{project.url}}','{{task.url}}')">Delete This</a>
                 {% if not task['completed']%}
-                  <a data-project="{{url}}" data-title="{{task['url']}}" class="task-switcher remaining setCompleted">Mark As Completed</a>
+                  <a data-project="{{project.url}}" data-title="{{task['url']}}" class="task-switcher remaining setCompleted">Mark As Completed</a>
                 {% else %}
-                  <a data-project="{{url}}" data-title="{{task['url']}}" class="task-switcher completed setRemaining">Mark As Remaining</a>
+                  <a data-project="{{project.url}}" data-title="{{task['url']}}" class="task-switcher completed setRemaining">Mark As Remaining</a>
                 {% endif %}
               </div>
             </li>
